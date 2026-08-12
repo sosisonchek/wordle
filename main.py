@@ -53,6 +53,7 @@ while True:
         cli(last_words)
         while True:
             user = input('> ')
+            user = user.lower()
             if user in wordle_list:
                 break
             else: print(f'There\'s no such word as {user}')
