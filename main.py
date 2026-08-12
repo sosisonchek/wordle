@@ -18,7 +18,6 @@ def cli(last_words):
 
     if os.name == 'nt': run('cls', shell=True)
     else: run('clear', shell=True)
-    print(wordle)
     print('Wordle')
     print('------')
 
