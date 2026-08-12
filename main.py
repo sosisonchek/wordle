@@ -13,7 +13,7 @@ MISS  = 'yellow'
 
 with open('wordles.json', 'r') as file:
     wordle_list = json.load(file)
-with open('nonwordles', 'r') as file:
+with open('nonwordles.json', 'r') as file:
     possible_words = json.load(file)
 
 def cli(last_words):
