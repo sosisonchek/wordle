@@ -13,8 +13,6 @@ MISS  = 'yellow'
 
 with open('wordles.json', 'r') as file:
     wordle_list = json.load(file)
-with open('nonwordles.json', 'r') as file:
-    possible_words = json.load(file)
 
 def cli(last_words):
 
@@ -55,7 +53,7 @@ while True:
         cli(last_words)
         while True:
             user = input('> ')
-            if user in possible_words:
+            if user in wordle_list:
                 break
             else: print(f'There\'s no word such as {user}')
         last_words.append(user)
