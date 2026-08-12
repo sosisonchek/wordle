@@ -56,7 +56,7 @@ while True:
             user = input('> ')
             if user in wordle_list:
                 break
-            else: print(f'There\'s no word such as {user}')
+            else: print(f'There\'s no such word as {user}')
         last_words.append(user)
         if user == wordle:
             cli(last_words)
