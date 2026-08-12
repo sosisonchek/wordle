@@ -5,7 +5,7 @@ from subprocess import run
 import os
 
 
-TRIES = 5
+TRIES = 6
 MATCH = 'green'
 WRONG = 'dark_grey'
 MISS  = 'yellow'
