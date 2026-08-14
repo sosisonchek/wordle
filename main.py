@@ -1,8 +1,9 @@
-import json
-import random
+from sharing import *
 from termcolor import colored
 from subprocess import run
 import os
+import json
+import random
 
 
 TRIES = 6
@@ -10,60 +11,99 @@ MATCH = 'green'
 WRONG = 'dark_grey'
 MISS  = 'yellow'
 
+language = input('Choose wordle\'s language (en/ru): ')
+if language != ('ru' or 'en'): language = 'en'
 
-with open('wordles.json', 'r') as file:
+filepath = os.path.join('langs', f'{language}.json')
+with open(filepath, 'r', encoding='UTF-8') as file:
     wordle_list = json.load(file)
 
-def cli(last_words):
 
+
+def clear():
     if os.name == 'nt': run('cls', shell=True)
     else: run('clear', shell=True)
     print('Wordle')
     print('------')
 
-    for word in last_words:
 
-        result = [''] * len(wordle)
+def wordinput(prefix: str, n_chars=5) -> str:
+    while True:
+        if prefix != None:
+            print(prefix, end=' ')
+        word = input().lower()
+        if word in wordle_list and len(word) == n_chars:
+            break
+        else: print('This word is not in the possible wordle answer list')
+        print()
+    return word
+
+def game(wordle, tries):
+    last_words = []
+    history = []
+    won = False
+    for n in range(tries):
+
+        clear()
+        for word in history:
+            for letter in word:
+                print(letter, end='')
+            print()
+        if won:
+            print('You won! Press enter to exit')
+            input()
+            exit()
+        history = []
+        guess = wordinput('>')
+        if guess == wordle: won = True
+
+        last_words.append(guess)
+        
+        colored_word = [''] * len(wordle)
         remaining = list(wordle)
 
-        for i in range(len(wordle)):
-            if word[i] == wordle[i]:
-                result[i] = colored(word[i], MATCH)
-                remaining[i] = None
+        for word in last_words:
+            colored_word = [''] * len(wordle)
+            remaining = list(wordle)
 
-        for i in range(len(wordle)):
-            if result[i] != '': continue
+            for i in range(len(wordle)):
+                if word[i] == wordle[i]:
+                    colored_word[i] = colored(word[i], MATCH)
+                    remaining[i] = None
 
-            if word[i] in remaining:
-                result[i] = colored(word[i], MISS)
-            else:
-                result[i] = colored(word[i], WRONG)
+            for i in range(len(wordle)):
+                if colored_word[i] != '':
+                    continue
+                if word[i] in remaining:
+                    colored_word[i] = colored(word[i], MISS)
+                else:
+                    colored_word[i] = colored(word[i], WRONG)
+            history.append(colored_word)
+    if not won:
+        print(f'You lost! The correct word was {wordle}. Press enter to exit!')
+        input()
+        exit()
         
-        for char in result:
-            print(char, end='')
-        print()
-        
-
 
 while True:
-    lost = True
-    wordle = random.choice(wordle_list)
-    last_words = []
-    for i in range(TRIES):
-        cli(last_words)
-        while True:
-            user = input('> ')
-            if user in wordle_list:
-                break
-            else: print(f'There\'s no such word as {user}')
-        last_words.append(user)
-        if user == wordle:
-            cli(last_words)
-            print('You won! Press enter to start a new round.', end='')
+    clear()
+    print("""
+What do you want to do?
+1) Play wordle
+2) Share a wordle
+3) Play a shared wordle
+""")
+    gamemode = int(input('> '))
+    match gamemode:
+        case 1:
+            wordle = random.choice(wordle_list)
+        case 2: 
+            print(f'Encoded wordle: {encode(wordinput('Choose a word:'))}. Press enter to continue')
             input()
-            lost = False
-            break
-    if lost:
-        print(f'The correct word was {colored(wordle, MATCH)}. Press enter to start a new round.', end='')
-        input()
-        
+            continue
+        case 3:
+            wordle = decode(input('Enter the code you recieved: '))
+    clear()
+    game(wordle, TRIES)
+
+    
